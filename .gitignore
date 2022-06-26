@@ -163,3 +163,26 @@ bin/
 
 # VS Code
 .vscode
+
+*.jar
+*.class
+*.bak
+*.o
+*.gitignore
+*.user
+FRCUserProgram
+.vs
+bin
+obj
+.gradle
+build
+.classpath
+.project
+org.eclipse.buildship.core.prefs
+
+### VisualStudioCode ###
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
