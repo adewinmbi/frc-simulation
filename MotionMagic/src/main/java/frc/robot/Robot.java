@@ -4,10 +4,13 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXSimCollection;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
+import edu.wpi.first.math.system.LinearSystem;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.simulation.PS4ControllerSim;
+import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Robot extends TimedRobot {
@@ -19,6 +22,23 @@ public class Robot extends TimedRobot {
 
   // Create a SimCollection class for simulated inputs into the Talon
   TalonFXSimCollection armSim = arm.getSimCollection();
+
+  final double gearing = 1;
+  final double jKgMetersSquared = 0.14753;
+  final double armLengthMeters = 0.3048; // 1 ft
+  final double minAngleRads = 0;
+  final double maxAngleRads = 3.14; // 180 degrees
+  final double armMassKg = 1.588; // 3.5 lbs
+
+  SingleJointedArmSim singleJointedArmSim = new SingleJointedArmSim(
+    DCMotor.getFalcon500(1), 
+    gearing,
+    jKgMetersSquared,
+    armLengthMeters, 
+    minAngleRads, 
+    maxAngleRads, 
+    armMassKg, 
+    true);
 
   @Override
   public void robotInit() {
