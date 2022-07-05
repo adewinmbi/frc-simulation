@@ -1,13 +1,10 @@
 package frc.robot;
 
-import javax.swing.DebugGraphics;
-
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.TalonFXSimCollection;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
-import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj.RobotController;
@@ -26,12 +23,15 @@ public class Robot extends TimedRobot {
   // Create a SimCollection class for simulated inputs into the Talon
   TalonFXSimCollection armSim = arm.getSimCollection();
 
+  // Arbitrary arm length, gearing, and angle limits.
+  // Arm mass based off AndyMark Climber in a Box
+  // These values were created for demonstration purposes, as I do not have access to a physical arm.
   final double gearing = 1;
-  final double jKgMetersSquared = 0.14753;
   final double armLengthMeters = 0.3048; // 1 ft
   final double minAngleRads = 0;
   final double maxAngleRads = 3.14; // 180 degrees
   final double armMassKg = 1.588; // 3.5 lbs
+  final double jKgMetersSquared = SingleJointedArmSim.estimateMOI(armLengthMeters, armMassKg);
 
   SingleJointedArmSim singleJointedArmSim = new SingleJointedArmSim(
     DCMotor.getFalcon500(1), 
@@ -56,7 +56,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-
     // Control the arm with percent output and ps4 controller
     double movement = ps4Controller.getLeftY();
     arm.set(ControlMode.PercentOutput, movement);
@@ -65,14 +64,16 @@ public class Robot extends TimedRobot {
 
   @Override
   public void simulationPeriodic() {
-
     // Pass battery voltage to simulated arm
     armSim.setBusVoltage(RobotController.getBatteryVoltage());
     SmartDashboard.putNumber("Arm Output Voltage", armSim.getMotorOutputLeadVoltage());
 
     singleJointedArmSim.setInputVoltage(armSim.getMotorOutputLeadVoltage());
+
+    // Update model using standard loop time (20 ms)
     singleJointedArmSim.update(0.02);
 
+    // Set simulated sensor position and velocity
     armSim.setIntegratedSensorRawPosition(
       radiansToNativeUnits(singleJointedArmSim.getAngleRads())
     );
