@@ -1,6 +1,9 @@
 package frc.robot;
 
+import javax.swing.DebugGraphics;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.TalonFXSimCollection;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
@@ -38,11 +41,12 @@ public class Robot extends TimedRobot {
     minAngleRads, 
     maxAngleRads, 
     armMassKg, 
-    true);
+    false);
 
   @Override
   public void robotInit() {
     arm.configFactoryDefault();
+    arm.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 0);
   }
 
   @Override
@@ -66,7 +70,27 @@ public class Robot extends TimedRobot {
     armSim.setBusVoltage(RobotController.getBatteryVoltage());
     SmartDashboard.putNumber("Arm Output Voltage", armSim.getMotorOutputLeadVoltage());
 
-    // TODO: Update sensors in SingleJointedArmSim here
+    singleJointedArmSim.setInputVoltage(armSim.getMotorOutputLeadVoltage());
+    singleJointedArmSim.update(0.02);
+
+    armSim.setIntegratedSensorRawPosition(
+      radiansToNativeUnits(singleJointedArmSim.getAngleRads())
+    );
+
+    armSim.setIntegratedSensorVelocity(
+      velocityToNativeUnits(singleJointedArmSim.getVelocityRadPerSec())
+    );
+  }
+
+  private int radiansToNativeUnits(double radians) {
+    double ticks = (radians / (2 *  Math.PI)) * 2048;
+    return (int)ticks;
+  }
+
+  // Converts to native units per 100 ms
+  private int velocityToNativeUnits(double radPerSec) {
+    double radPer100ms = radPerSec / 1000;
+    return radiansToNativeUnits(radPer100ms);
   }
 
 }
