@@ -6,7 +6,7 @@ This repository contains various examples of different frc simulation systems, m
 
 ## Summary
 
-CTRE Simulations are useful for verifying logic before programmers are given access to a physical robot, as well as for simulating physics. However, because of the boilerplate classes and code (ex. SimCollection) and its lack of compatibility with existing methods of controlling motors (ex. MotionMagic, built-in PID that does not use the PIDController class), I believe there is not a strong reason to integrate CTRE Simulations with a codebase besides for the reasons mentioned above.
+**CTRE Simulations** are useful for verifying logic before programmers are given access to a physical robot, as well as for simulating physics. However, because of the boilerplate classes and code (ex. SimCollection) and its lack of compatibility with existing methods of controlling motors (ex. MotionMagic, built-in PID that does not use the PIDController class), I believe there is not a strong reason to integrate CTRE Simulations with a codebase besides for the reasons mentioned above. A good use case for CTRE simulations include anything that may be logic heavy, including a swerve drivebase.
 
 ## Single Motor Arm Simulation
 
